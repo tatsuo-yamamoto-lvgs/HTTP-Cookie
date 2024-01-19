@@ -12,11 +12,20 @@ function generateSessionId(length: number): string {
   return result;
 }
 
+// function parseCookie(rawCookie: string): Record<string, string> {
+//   const cookieIngredient = rawCookie.split(";");
+
+//   // for (let cookieIngredientNum = 0; cookieIngredientNum = )
+
+//   const processedCookie = new Map() < string;
+//   return processedCookie;
+// }
+
 const sessionId: string = generateSessionId(20);
 
 const server = http.createServer((req, res) => {
   const cookies = req.headers.cookie;
-
+  console.log(cookies);
   if (!cookies || !cookies.includes("SID")) {
     res.setHeader("Set-Cookie", `SID=${sessionId}`);
     //本当はuuidを使いたかったけど、要件に使ってはいけないとあったので、コードの書き方の勉強も含めてランダム値で
