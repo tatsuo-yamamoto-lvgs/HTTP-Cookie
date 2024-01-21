@@ -1,9 +1,9 @@
-import mysql from "mysql2";
+import mysql from "mysql2/promise";
 
-export function loginModel(username: string): Promise<string | null> {
-  return new Promise((resolve, reject) => {
+export async function loginModel(username: string): Promise<string | null> {
+  try {
     // データベース接続設定
-    const connection = mysql.createConnection({
+    const connection = await mysql.createConnection({
       host: "127.0.0.1",
       port: 3306,
       user: "root",
@@ -11,36 +11,22 @@ export function loginModel(username: string): Promise<string | null> {
       database: "cookie-assignment",
     });
 
-    // データベースへの接続
-    connection.connect((error) => {
-      if (error) {
-        console.error("データベース接続エラー: " + error.stack);
-        reject(error);
-        return;
-      }
-      console.log("データベースに接続されました。");
+    // SQLクエリの実行
+    const results: any[] = await connection.execute(
+      "SELECT name FROM user WHERE name = ?",
+      [username]
+    );
 
-      // SQLクエリの実行
-      connection.query(
-        "SELECT name FROM user WHERE name = ?",
-        [username],
-        (error, results: any[]) => {
-          // データベース接続終了
-          connection.end();
-          console.log(results);
+    // データベース接続終了
+    await connection.end();
 
-          if (error) {
-            reject(error);
-            return;
-          }
-
-          if (results.length > 0) {
-            resolve(results[0].name);
-          } else {
-            resolve(null);
-          }
-        }
-      );
-    });
-  });
+    if (results.length > 0) {
+      return results[0].name;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log("データベースエラー");
+    throw new Error();
+  }
 }
