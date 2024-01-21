@@ -1,8 +1,8 @@
 //このファイルの責務：メソッドどURIによるルーティングおよび、レスポンスをクラインとに返すこと
 
 import * as http from "http";
-import renderLoginPage from "./view/main";
-import renderMainPage from "./view/login";
+import renderMainPage from "./view/main";
+import loginService from "./controller/loginService";
 
 // セッションIDを生み出す関数
 function generateSessionId(length: number): string {
@@ -16,22 +16,27 @@ function generateSessionId(length: number): string {
   return result;
 }
 
-// リクエストボディを取得する関数
-const getRequestBody = (req: http.IncomingMessage) =>
+const getRequestBody = (req: http.IncomingMessage): Promise<string> =>
   new Promise((resolve, reject) => {
     let body = "";
-    req.on("data", (chunk) => (body += chunk.toString()));
-    req.on("end", () => resolve(body));
-    req.on("error", (err) => reject(err));
+    req.on("data", (chunk) => {
+      body += chunk.toString();
+    });
+    req.on("end", () => {
+      resolve(body);
+    });
+    req.on("error", (err) => {
+      reject(err);
+    });
   });
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const path = req.url;
   const method = req.method;
-  const body = getRequestBody(req);
-  console.log("ボディ:", body);
+  const body = await getRequestBody(req);
   if (path === "/login") {
-    const contents = renderLoginPage(method, body);
+    //TODO:controller層以下にそのユーザが存在するか確認させる。
+    const contents = await loginService(method, body);
     res.writeHead(200, {
       "Content-Type": "text/html; charset=utf-8",
     });
