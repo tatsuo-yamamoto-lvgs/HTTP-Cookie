@@ -12,23 +12,25 @@ function generateSessionId(length: number): string {
   return result;
 }
 
-// function parseCookie(rawCookie: string): Record<string, string> {
-//   const cookieIngredient = rawCookie.split(";");
-
-//   // for (let cookieIngredientNum = 0; cookieIngredientNum = )
-
-//   const processedCookie = new Map() < string;
-//   return processedCookie;
-// }
+function parseCookie(rawCookie: string | undefined): Record<string, string> {
+  const cookieIngredients: Record<string, string> = {};
+  if (rawCookie) {
+    const cookiePairs = rawCookie.split("; ");
+    cookiePairs.forEach((cookie) => {
+      const [name, value] = cookie.split("=");
+      cookieIngredients[name] = value;
+    });
+  }
+  return cookieIngredients;
+}
 
 const sessionId: string = generateSessionId(20);
 
 const server = http.createServer((req, res) => {
   const cookies = req.headers.cookie;
-  console.log(cookies);
-  if (!cookies || !cookies.includes("SID")) {
+  const cookieIngredients = parseCookie(cookies);
+  if (!cookies || !cookieIngredients["SID"]) {
     res.setHeader("Set-Cookie", `SID=${sessionId}`);
-    //本当はuuidを使いたかったけど、要件に使ってはいけないとあったので、コードの書き方の勉強も含めてランダム値で
   }
 
   res.writeHead(200, {
