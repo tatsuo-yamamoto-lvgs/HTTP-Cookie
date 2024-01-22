@@ -30,6 +30,7 @@ const server = http.createServer((req, res) => {
   const cookies = req.headers.cookie;
   const cookieIngredients = parseCookie(cookies);
   if (!cookies || !cookieIngredients["SID"]) {
+    const sessionId: string = generateSessionId(20);
     res.setHeader("Set-Cookie", `SID=${sessionId}`);
   }
 
