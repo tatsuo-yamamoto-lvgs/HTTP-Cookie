@@ -12,11 +12,11 @@ export async function loginModel(username: string): Promise<string | null> {
     });
 
     // SQLクエリの実行
-    const results: any[] = await connection.execute(
+    const [results]: any[] = await connection.execute(
       "SELECT name FROM user WHERE name = ?",
       [username]
     );
-
+    console.log("results :", results);
     // データベース接続終了
     await connection.end();
 
