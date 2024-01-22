@@ -24,8 +24,6 @@ function parseCookie(rawCookie: string | undefined): Record<string, string> {
   return cookieIngredients;
 }
 
-const sessionId: string = generateSessionId(20);
-
 const server = http.createServer((req, res) => {
   const cookies = req.headers.cookie;
   const cookieIngredients = parseCookie(cookies);
