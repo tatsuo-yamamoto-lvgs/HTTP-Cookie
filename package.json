@@ -1,0 +1,26 @@
+{
+  "name": "http-cookie",
+  "version": "1.0.0",
+  "description": "http(cookie)課題",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node server/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tatsuo-yamamoto-lvgs/HTTP-Cookie.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mustache": "^4.2.0",
+    "mysql2": "^3.7.0",
+    "ts-node": "^10.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}
