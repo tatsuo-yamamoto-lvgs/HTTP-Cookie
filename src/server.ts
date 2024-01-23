@@ -1,20 +1,52 @@
-//このファイルの責務：メソッドどURIによるルーティングおよび、レスポンスをクラインとに返すこと
+//責務：メソッドどURIによるルーティングおよび、レスポンスをクラインとに返すこと
 
 import * as http from "http";
 import renderMainPage from "./view/main";
 import loginService from "./controller/loginService";
+import { checkSessionManager } from "./middleware/sessionManager";
 
-// セッションIDを生み出す関数
-function generateSessionId(length: number): string {
-  let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+const server = http.createServer(async (req, res) => {
+  const path = req.url;
+  const method = req.method;
+  const cookies = req.headers.cookie;
+  const sessionId = parseCookie(cookies)["SID"];
+  const body = await getRequestBody(req);
+  const userName = await checkSessionManager(sessionId);
+  console.log("userName:", userName);
+  if (!userName && path !== "/login") {
+    res.writeHead(307, {
+      Location: "http://localhost:3000/login",
+      "Cache-Control": "no-cache, no-store",
+    });
+    res.end();
+    console.log("111111111111");
+    return;
+  } else if (!userName && path === "/login") {
+    await loginService(method, body, res);
+    console.log("222222222222");
+    return;
+  } else if (userName && path === "/login") {
+    res.writeHead(303, {
+      Location: "http://localhost:3000/",
+      "Cache-Control": "no-cache, no-store",
+    });
+    res.end();
+    return;
+  } else if (userName && path !== "/login") {
+    const contents = renderMainPage();
+    res.writeHead(200, {
+      "Content-Type": "text/html; charset=utf-8",
+    });
+    res.end(contents);
   }
-  return result;
-}
+});
+
+const port = 3000;
+const host = "localhost";
+
+server.listen(port, host, () => {
+  console.log(`Server running at http://${host}:${port}/`);
+});
 
 const getRequestBody = (req: http.IncomingMessage): Promise<string> =>
   new Promise((resolve, reject) => {
@@ -30,61 +62,14 @@ const getRequestBody = (req: http.IncomingMessage): Promise<string> =>
     });
   });
 
-const server = http.createServer(async (req, res) => {
-  const path = req.url;
-  const method = req.method;
-  const body = await getRequestBody(req);
-  if (path === "/login") {
-    //TODO:controller層以下にそのユーザが存在するか確認させる。
-    const contents = await loginService(method, body);
-    res.writeHead(200, {
-      "Content-Type": "text/html; charset=utf-8",
+function parseCookie(rawCookie: string | undefined): Record<string, string> {
+  const cookieIngredients: Record<string, string> = {};
+  if (rawCookie) {
+    const cookiePairs = rawCookie.split("; ");
+    cookiePairs.forEach((cookie) => {
+      const [name, value] = cookie.split("=");
+      cookieIngredients[name] = value;
     });
-    res.end(contents);
-  } else if (path === "") {
-    const cookies = req.headers.cookie;
-    let sessionId = "";
-    // 型推論があるので、明示的に型宣言しなくていい（req.header.cookieはstring | undefinedを返す。""の時点でstring型）
-
-    if (cookies) {
-      const cookiesArray: string[] = cookies.split(";");
-      cookiesArray.forEach((cookie) => {
-        const [name, value] = cookie.split("=").map((c) => c.trim());
-        // TODO：ここの処理の意味よくわからないのでなんとかしろって言ってんの
-        if (name === "SID") {
-          sessionId = value;
-        }
-      });
-    }
-
-    const contents = renderMainPage(sessionId);
-
-    if (!sessionId) {
-      res.writeHead(307, {
-        Location: "http://localhost:3000/login",
-        "Cache-Control": "no-cache, no-store",
-        // no-cache:キャッシュがあっても絶対サーバにきけ
-        // no-store:キャッシュするな
-      });
-      res.end();
-      return;
-
-      // sessionId = generateSessionId(20); // 新しいセッションIDを生成
-      // res.setHeader("Set-Cookie", `SID=${sessionId}`);
-    }
-
-    res.writeHead(200, {
-      "Content-Type": "text/html; charset=utf-8",
-    });
-    //もしヘッダーとかフッターとか普遍のものがあるならres.writeで追加してもいいね
-    res.end(contents);
   }
-});
-// http.createServerは<http.Server>オブジェクトを返す。
-
-const port = 3000;
-const host = "localhost";
-
-server.listen(port, host, () => {
-  console.log(`Server running at http://${host}:${port}/`);
-});
+  return cookieIngredients;
+}

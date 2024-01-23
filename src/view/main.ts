@@ -1,10 +1,9 @@
 import mustache from "mustache";
 
-export default function renderMainPage(sessionId: string): string {
+export default function renderMainPage(): string {
   //TODO:もしsessionIDがあれば、そのIDで自動ログインするってわけ
   //TODO:セッションハイジャックされたら終わりってわけ。だからjwtで実装してね（課題4）
   let template: string = "";
-  console.log(`sessionIdは${sessionId}`);
 
   template = `
     <html>

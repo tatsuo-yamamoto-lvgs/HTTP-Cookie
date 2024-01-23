@@ -17,6 +17,7 @@
   "dependencies": {
     "mustache": "^4.2.0",
     "mysql2": "^3.7.0",
+    "redis": "^4.6.12",
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
