@@ -25,8 +25,10 @@ export default function renderMainPage(allPost: PostData[]): string {
       {{/allPost}}
     </html>
   `;
+  // ここを{{{body}}}にするとhtmlエスケープされない→XSSできるようになる
 
   const contents = mustache.render(template, { allPost });
+  console.log(contents);
 
   return contents;
 }
