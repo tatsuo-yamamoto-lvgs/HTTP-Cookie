@@ -12,7 +12,6 @@ export async function createPostModel(
       password: "cookie-assignment-pw",
       database: "cookie-assignment",
     });
-    console.log("Post:", post);
     await connection.execute("INSERT INTO post (user_id, body) VALUES (?, ?)", [
       userId,
       post,

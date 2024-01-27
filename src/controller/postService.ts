@@ -5,8 +5,8 @@ export class postService {
 
   async createPostService(userId: number, body: string): Promise<void> {
     try {
-      const posts = await createPostModel(userId, body);
-      //
+      const decodedBody = decodeURIComponent(body.replace(/\+/g, " "));
+      const posts = await createPostModel(userId, decodedBody);
     } catch (error) {
       console.log("データベースエラー");
       throw new Error();
