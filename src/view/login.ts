@@ -1,8 +1,7 @@
 import mustache from "mustache";
 
 export default function renderLoginPage(): string {
-  let contents: string = "";
-  contents = `
+  const contents = `
         <html>
             <div>
                 <h2>ログイン</h2>
