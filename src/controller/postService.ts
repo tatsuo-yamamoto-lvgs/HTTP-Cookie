@@ -18,7 +18,7 @@ export class postService {
       const displayPosts = allPosts.map((post) => {
         return {
           userId: post.user_id,
-          body: decodeURIComponent(post.body),
+          body: post.body,
           createdAt: post.created_at,
         };
       });
