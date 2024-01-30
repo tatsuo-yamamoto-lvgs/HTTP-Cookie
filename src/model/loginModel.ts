@@ -4,6 +4,27 @@ import dotenv from "dotenv";
 dotenv.config();
 export async function loginModel(username: string): Promise<string | null> {
   try {
+    const connection = await connectToDatabase();
+    const [results]: any[] = await connection.execute(
+      "SELECT name FROM user WHERE name = ?",
+      [username]
+    );
+    console.log("results :", results);
+    await connection.end();
+
+    if (results.length > 0) {
+      return results[0].name;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.log("データベースエラー");
+    throw new Error();
+  }
+}
+
+async function connectToDatabase() {
+  try {
     // データベース接続設定
     const connection = await mysql.createConnection({
       host: process.env.MYSQL_HOST,
@@ -12,21 +33,7 @@ export async function loginModel(username: string): Promise<string | null> {
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
     });
-
-    // SQLクエリの実行
-    const [results]: any[] = await connection.execute(
-      "SELECT name FROM user WHERE name = ?",
-      [username]
-    );
-    console.log("results :", results);
-    // データベース接続終了
-    await connection.end();
-
-    if (results.length > 0) {
-      return results[0].name;
-    } else {
-      return null;
-    }
+    return connection;
   } catch (error) {
     console.log("データベースエラー");
     throw new Error();
