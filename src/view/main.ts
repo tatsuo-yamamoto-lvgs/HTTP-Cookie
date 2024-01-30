@@ -2,13 +2,10 @@ import mustache from "mustache";
 
 export default function renderMainPage(): string {
   const template = `
-    <html>
-      <head><title>{{title}}</title></head>
-      <body>
+    <!DOCTYPE html>
+      <title>{{title}}</title>
         <h1>{{heading}}</h1>
         <p>{{message}}</p>
-      </body>
-    </html>
   `;
 
   const data = {
