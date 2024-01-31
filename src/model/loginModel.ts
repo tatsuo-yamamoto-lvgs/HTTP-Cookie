@@ -1,23 +1,15 @@
 import mysql from "mysql2/promise";
+import dotenv from "dotenv";
 
+dotenv.config();
 export async function loginModel(username: string): Promise<number | null> {
   try {
-    // データベース接続設定
-    const connection = await mysql.createConnection({
-      host: "127.0.0.1",
-      port: 3306,
-      user: "root",
-      password: "cookie-assignment-pw",
-      database: "cookie-assignment",
-    });
-
-    // SQLクエリの実行
+    const connection = await connectToDatabase();
     const [results]: any[] = await connection.execute(
       "SELECT id FROM user WHERE name = ?",
       [username]
     );
     console.log("results :", results);
-    // データベース接続終了
     await connection.end();
 
     if (results.length > 0) {
@@ -25,6 +17,23 @@ export async function loginModel(username: string): Promise<number | null> {
     } else {
       return null;
     }
+  } catch (error) {
+    console.log("データベースエラー");
+    throw new Error();
+  }
+}
+
+async function connectToDatabase() {
+  try {
+    // データベース接続設定
+    const connection = await mysql.createConnection({
+      host: process.env.MYSQL_HOST,
+      port: Number(process.env.MYSQL_PORT),
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+    });
+    return connection;
   } catch (error) {
     console.log("データベースエラー");
     throw new Error();

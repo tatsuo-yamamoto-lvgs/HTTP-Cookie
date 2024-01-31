@@ -20,7 +20,7 @@ export default async function loginService(
     console.log("accountData:", accountData);
     if (accountData) {
       const sessionId: string = generateSessionId(20);
-      bindSessionToAccount(accountData, sessionId);
+      await bindSessionToAccount(accountData, sessionId);
       res.writeHead(303, {
         "Set-Cookie": `SID=${sessionId};`,
         Location: "http://localhost:3000/",

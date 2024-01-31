@@ -3,7 +3,9 @@ import mustache from "mustache";
 export default function renderMainPage(allPost: PostData[]): string {
   //TODO:セッションハイジャックとjwtは関係ないよ
   const template = `
-    <html>
+  <!DOCTYPE html>
+    <html lang="ja">
+      <head></head>
       <body>
         <form action="" method="post">
             <div>

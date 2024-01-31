@@ -1,8 +1,9 @@
-import mustache from "mustache";
-
 export default function renderLoginPage(): string {
   const contents = `
-        <html>
+        <!DOCTYPE html>
+            <html lang="ja">
+            <head></head>
+            <body>
             <div>
                 <h2>ログイン</h2>
                 <form action="/login" method="post">
@@ -13,7 +14,8 @@ export default function renderLoginPage(): string {
                     <button type="submit">ログイン</button>
                 </form>
             </div>
-        </html>
+            </body>
+            </html>
       `;
   return contents;
 }
