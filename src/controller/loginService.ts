@@ -5,7 +5,7 @@ import { bindSessionToAccount } from "../middleware/sessionManager";
 
 export default async function loginService(
   method: string | undefined,
-  body: string,
+  userName: string,
   res: http.ServerResponse
 ): Promise<void> {
   let contents = renderLoginPage();
@@ -16,7 +16,6 @@ export default async function loginService(
     res.end(contents);
     return;
   } else if (method === "POST") {
-    const userName = parseBody(body);
     const accountData = await loginModel(userName);
     console.log("accountData:", accountData);
     if (accountData) {
@@ -36,11 +35,6 @@ export default async function loginService(
       res.end();
     }
   }
-}
-
-function parseBody(rawBody: string): string {
-  const userName: string[] = rawBody.split("=");
-  return userName[1];
 }
 
 function generateSessionId(length: number): string {

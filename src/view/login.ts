@@ -1,6 +1,9 @@
 export default function renderLoginPage(): string {
   const contents = `
         <!DOCTYPE html>
+            <html lang="ja">
+            <head></head>
+            <body>
             <div>
                 <h2>ログイン</h2>
                 <form action="/login" method="post">
@@ -11,6 +14,8 @@ export default function renderLoginPage(): string {
                     <button type="submit">ログイン</button>
                 </form>
             </div>
+            </body>
+            </html>
       `;
   return contents;
 }

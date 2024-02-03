@@ -2,18 +2,18 @@ import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
 dotenv.config();
-export async function loginModel(username: string): Promise<string | null> {
+export async function loginModel(username: string): Promise<number | null> {
   try {
     const connection = await connectToDatabase();
     const [results]: any[] = await connection.execute(
-      "SELECT name FROM user WHERE name = ?",
+      "SELECT id FROM user WHERE name = ?",
       [username]
     );
     console.log("results :", results);
     await connection.end();
 
     if (results.length > 0) {
-      return results[0].name;
+      return results[0].id;
     } else {
       return null;
     }
