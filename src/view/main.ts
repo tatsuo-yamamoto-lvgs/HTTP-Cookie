@@ -14,7 +14,6 @@ export default function renderMainPage(allPost: PostData[]): string {
             </div>
           <button type="submit">投稿する</button>
         </form>
-      </body>
       <h2>つぶやき一覧</h2>
       {{#allPost}}
         <div>
@@ -23,6 +22,7 @@ export default function renderMainPage(allPost: PostData[]): string {
           <p>Created At: {{createdAt}}</p>
         </div>
       {{/allPost}}
+      </body>
     </html>
   `;
   // ここを{{{body}}}にするとhtmlエスケープされない→XSSできるようになる
